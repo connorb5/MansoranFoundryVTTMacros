@@ -1,0 +1,66 @@
+//##############################################
+// Read First!!!!!!!!!!!!!!!!!
+// Midi-qol "On Use" macro
+// Thanks to Kekilla for the clean dialog
+//#############################################
+silverTongue()
+async function silverTongue(){
+    let actorD = canvas.tokens.controlled[0].actor;
+    let choice = "";
+    new Dialog({
+        title: `Silver Tongue Skill Check`,
+        content: `<p>Pick one to Roll</p><form><div class="form-group"><select id="skill"><option value="dec">Deception</option><option value="per">Persuasion</option></select></div></form>`,
+        buttons: {
+            adv: { label: "Advantage", callback: () => choice = `adv` },
+            norm: { label: "Normal", callback: () => choice = `nor` },
+            dis: { label: "Disadvantage", callback: () => choice = `dis` }
+        },
+        close: (html) => {
+            let skill = html.find('#skill')[0].value;
+            let skillBonus = 0
+            if(skill == "dec"){
+                skillBonus = actorD.system.skills.dec.total
+            }else if (skill == "per"){
+                skillBonus = actorD.system.skills.per.total
+            }
+            let dice = choice == `adv` ? `{2d20kh,10}kh + ${skillBonus}` : choice == `nor` ? `{1d20,10}kh + ${skillBonus}` : `{2d20kl,10}kh + ${skillBonus}`;
+            let skill_type = skill == `per` ? `Persuasion` : `Deception`;
+            let roll_type = choice == `adv` ? `(Advantage)` : choice == `dis` ? `(Disadvantage)` : ``;
+            console.log(dice)
+            get_roll(dice,actorD, skill_type, roll_type);
+        }
+    }).render(true);
+    async function get_roll(dice,actorD, skill_type, roll_type) {
+        let roll = await new Roll(dice).roll();
+        game.dice3d?.showForRoll(roll);
+        let result = roll.results;
+        let chatTemplate = ``;
+        let get_dice = 0
+        let dice_roll = roll.terms[0].results;
+        for (let dice of dice_roll) {
+            if (!dice.discarded) {
+                get_dice = dice.result
+            }
+        }
+        console.log(get_dice)
+
+
+        if(get_dice == 1){
+            chatTemplate = `${skill_type} Critical Failure! Can't talk your way out of this!`
+        }else if (get_dice == 20){
+            chatTemplate = `${skill_type} Critical Success!`
+        }else{
+            chatTemplate = `${skill_type} Silvery Tongue Check:`
+        }
+        
+        ChatMessage.create({
+            content: chatTemplate,
+            speaker: {alias: actorD.system.parent.name}
+        });
+        // Send attack to chate
+        roll.toMessage({
+            rollMode: 'roll',
+            speaker: {alias: actorD.system.parent.name}
+        });
+    }
+};
