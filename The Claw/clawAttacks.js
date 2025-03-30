@@ -117,7 +117,7 @@ async function clawAttack(d20RollString,wepID,selected_actor,target_actor,fireRu
     // Natural one message
     ChatMessage.create({
       content: `
-        <p> The Claw takes it's anger out on you. You winch from the violent imagery in your head. "DO BETTER". You take <strong>${damageRoll.total} physcic damage</strong>.</p>`,
+        <p> The Claw takes it's anger out on you. You wince from the violent imagery in your head. "DO BETTER". You take <strong>${damageRoll.total} physcic damage</strong>.</p>`,
       roll: damageRoll
     });
     damageRoll.toMessage({
@@ -200,8 +200,8 @@ async function main(){
       </div>
       <div style="flex:1;margin-left:25px;">
         <input id="tripleDice" type="checkbox" checked /><label for="tripleDice"> 3-Dice Adv/Dis?</label>
-        <input id="fireRune" type="checkbox" checked /><label for="fireRune"> Fire Rune?</label>
-        <input id="giantsMight" type="checkbox" checked /><label for="giantsMight"> Giant's Might?</label>
+        <input id="fireRune" type="checkbox" /><label for="fireRune"> Fire Rune?</label>
+        <input id="giantsMight" type="checkbox" /><label for="giantsMight"> Giant's Might?</label>
       </div>
     </div>
   </div></div>
